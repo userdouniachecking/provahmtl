@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggiungi Numeri</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #333;
+            text-align: center;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="number"] {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="number"]:focus {
+            border-color: #007bff;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .stats {
+            background-color: #e9ecef;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .stats p {
+            margin: 5px 0;
+            color: #495057;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 6px;
+        }
+
+        li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        li:last-child {
+            border-bottom: none;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .btn-delete:hover {
+            background-color: #bd2130;
+        }
+
+        .btn-reset {
+            width: 100%;
+            background-color: #6c757d;
+            margin-top: 15px;
+        }
+
+        .btn-reset:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Gestione Numeri</h2>
+
+        <div class="input-group">
+            <input type="number" id="numeroInput" placeholder="Inserisci un numero" step="any">
+            <button onclick="aggiungiNumero()">Aggiungi</button>
+        </div>
+
+        <div class="stats">
+            <p><strong>Totale elementi:</strong> <span id="conteggio">0</span></p>
+            <p><strong>Somma:</strong> <span id="somma">0</span></p>
+            <p><strong>Media:</strong> <span id="media">0</span></p>
+        </div>
+
+        <ul id="listaNumeri"></ul>
+
+        <button class="btn-reset" onclick="resetLista()">Svuota Lista</button>
+    </div>
+
+    <script>
+        let numeri = [];
+
+        // Consente di aggiungere il numero premendo "Invio" sulla tastiera
+        document.getElementById('numeroInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                aggiungiNumero();
+            }
+        });
+
+        function aggiungiNumero() {
+            const input = document.getElementById('numeroInput');
+            const valore = parseFloat(input.value);
+
+            // Controllo se è stato inserito un numero valido
+            if (isNaN(valore)) {
+                alert("Per favore, inserisci un numero valido.");
+                return;
+            }
+
+            numeri.push(valore);
+            input.value = ''; // Pulisce il campo di testo
+            input.focus(); // Riporta il cursore sull'input
+
+            aggiornaInterfaccia();
+        }
+
+        function rimuoviNumero(index) {
+            numeri.splice(index, 1);
+            aggiornaInterfaccia();
+        }
+
+        function resetLista() {
+            numeri = [];
+            aggiornaInterfaccia();
+        }
+
+        function aggiornaInterfaccia() {
+            const lista = document.getElementById('listaNumeri');
+            lista.innerHTML = '';
+
+            let somma = 0;
+
+            numeri.forEach((num, index) => {
+                somma += num;
+
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span><strong>#${index + 1}:</strong> ${num}</span>
+                    <button class="btn-delete" onclick="rimuoviNumero(${index})">Elimina</button>
+                `;
+                lista.appendChild(li);
+            });
+
+            // Calcolo e aggiornamento delle statistiche
+            const conteggio = numeri.length;
+            const media = conteggio > 0 ? (somma / conteggio).toFixed(2) : 0;
+
+            document.getElementById('conteggio').textContent = conteggio;
+            document.getElementById('somma').textContent = somma;
+            document.getElementById('media').textContent = media;
+        }
+    </script>
+
+</body>
+</html>
